@@ -211,7 +211,7 @@ class Validator
 			$cookie_errors[] = 'value';
 		}
 		
-		if (($matches[1] == 'k' || $matches[1] == 'sid') && !ctype_alnum($cookie['value']))
+		if (($matches[1] == 'k' || $matches[1] == 'sid') && !empty($cookie['value']) && !ctype_alnum($cookie['value']))
 		{
 			$cookie_errors[] = 'value';
 		}
