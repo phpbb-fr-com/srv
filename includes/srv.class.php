@@ -321,7 +321,7 @@ function handling_http_cookie(&$cookie)
 {
 	$return = $matches = array();
 	
-	if (preg_match('#^([a-z0-9_-]+)=([^;]+)#i', $cookie, $matches))
+	if (preg_match('#^([a-z0-9_-]+)=([^;]*)#i', $cookie, $matches))
 	{
 		$return['name']		= $matches[1];
 		$return['value']	= $matches[2];
