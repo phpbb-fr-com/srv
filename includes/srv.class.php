@@ -29,27 +29,32 @@ class Validator
 	
 	public function __construct($url)
 	{
+		// What? You dare give me something that is not a URL??
 		if (!preg_match('#^https?://[a-z0-9-]+\.[a-z0-9.-]+(/[a-z0-9._/-]*)?$#i', $url))
 		{
 			trigger_error('The format of the URL is invalid', E_USER_ERROR);
 		}
+		
+		// I did not ask for the path of a script but the path of the forum !
 		if (preg_match('#(index|forum|board|portal)\.(php[0-9]*|html?)$#i', $url, $matches))
 		{
 			trigger_error('Please enter the URL without ' . $matches[0], E_USER_ERROR);
 		}
 		$this->url = $url . ((substr($url, strlen($url) - 1) != '/') ? '/' : '');
 		
+		// With a user-agent, this is better, right?
 		$user_agent  = 'PHP/' . PHP_VERSION . ' (SRV/' . VERSION;
 		$user_agent .= (defined('PHPBB_VERSION')) ? ('; PHPBB/' . PHPBB_VERSION) : '';
 		$user_agent .= (!empty($_SERVER['HTTP_HOST'])) ? ('; +http://' . $_SERVER['HTTP_HOST'] . '/)') : ')';
 		$context = array(
 			'http'	=> array (
-				//'user_agent'		=> $user_agent,
+				'user_agent'		=> $user_agent,
 				'follow_location'	=> 0, // 0 = unactivated ; 1 = activated
 				'timeout'			=> 2
 		));
 		$this->context = stream_context_create($context);
 		
+		// We create our array?
 		$this->reset_result_array(self::ALL);
 	}
 	
@@ -74,7 +79,7 @@ class Validator
 			// Get the board index (headers & contents)
 			extract(file_get_contents($url, false, $this->context));
 			
-			// What !? There has an error ?
+			// What !? There has an error?
 			if ($http_response === false || $http_response_header['status'] == 404)
 			{
 				$this->result[self::COOKIES] = array_merge($this->result[self::COOKIES], array(
@@ -83,6 +88,7 @@ class Validator
 					'error_message'	=> (!empty($http_error)) ? $http_error : false
 				));
 			}
+			// What?? I am told to go somewhere else?
 			else if (!empty($http_response_header['location']))
 			{
 				if (!is_array($http_response_header['location']))
